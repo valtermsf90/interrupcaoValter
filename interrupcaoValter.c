@@ -11,14 +11,10 @@
 // Definição do número de LEDs e pino.
 #define CONTADOR_LED 25
 #define PINO_MATRIZ_LED 7
-#define PINO_BUZZER_A 21
-#define PINO_BUZZER_B 10
-#define BOTAO_J 22
 #define BOTAO_A 5
 #define BOTAO_B 6
-#define LED_G 11
 #define LED_R 13
-#define LED_B 12
+
 
 // Definição de pixel GRB
 struct pixel_t
@@ -38,7 +34,6 @@ uint variavel_maquina_de_estado;
 void inicializacao_maquina_pio(uint pino);
 void iniciar_pino_gpio();
 void atribuir_cor_ao_led(const uint indice, const uint8_t r, const uint8_t g, const uint8_t b, uint8_t intensidade);
-void beep(int frequency);
 void limpar_o_buffer();
 void escrever_no_buffer();
 void desenho(int num);
@@ -86,12 +81,10 @@ int main(void)
 		if (gpio_get(BOTAO_A) == 0)
 		{
 			BOTAO = BOTAO_A;
-			beep(1000);
 		}
 		if (gpio_get(BOTAO_B) == 0)
 		{
 			BOTAO = BOTAO_B;
-			beep(1000);
 		}
 		escrever_no_buffer();
 	}
@@ -129,21 +122,10 @@ void inicializacao_maquina_pio(uint pino)
 
 void iniciar_pino_gpio()
 {
-	gpio_init(PINO_BUZZER_A);
-	gpio_set_dir(PINO_BUZZER_A, GPIO_OUT);
-	gpio_init(PINO_BUZZER_B);
-	gpio_set_dir(PINO_BUZZER_B, GPIO_OUT);
-
-	gpio_init(LED_G);
-	gpio_set_dir(LED_G, GPIO_OUT);
+	// Inicializa os pinos GPIO.
 	gpio_init(LED_R);
 	gpio_set_dir(LED_R, GPIO_OUT);
-	gpio_init(LED_B);
-	gpio_set_dir(LED_B, GPIO_OUT);
-
-	gpio_init(BOTAO_J);
-	gpio_set_dir(BOTAO_J, GPIO_IN);
-	gpio_pull_up(BOTAO_J);
+	//botoes
 	gpio_init(BOTAO_A);
 	gpio_set_dir(BOTAO_A, GPIO_IN);
 	gpio_pull_up(BOTAO_A);
@@ -275,31 +257,13 @@ void escrever_no_buffer()
 	}
 	sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
 }
-
-void beep(int frequency)
-{
-	int period = 1000000 / frequency; // Período em microssegundos
-	int half_period = period / 2;
-
-	for (int i = 0; i < 10; i++)
-	{															// Repete 10 vezes para o som
-		gpio_put(PINO_BUZZER_A, 1); // Ativa o buzzer
-		gpio_put(PINO_BUZZER_B, 1); // Ativa o buzzer
-		sleep_us(half_period);			// Atraso de meio período
-
-		gpio_put(PINO_BUZZER_A, 0); // Desativa o buzzer
-		gpio_put(PINO_BUZZER_B, 0); // Desativa o buzzer
-		sleep_us(half_period);			// Atraso de meio período
-	}
-}
-
 void gpio_irq_handler(uint gpio, uint32_t events)
 {
 
 	// Obtém o tempo atual em microssegundos
 	uint32_t current_time = to_us_since_boot(get_absolute_time());
 	// Verifica se passou tempo suficiente desde o último evento
-	if (current_time - last_time > 200000) // 200 ms de debouncing
+	if (current_time - last_time > 500000) // 500 ms de debouncing
 	{
 		last_time = current_time; // Atualiza o tempo do último evento
 		// Verifica qual botão foi pressionado	
