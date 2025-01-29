@@ -44,6 +44,12 @@ void escrever_no_buffer();
 void desenho(int num);
 void piscar_led();
 
+//-----VARIÁVEIS-----
+static volatile uint a = 1;
+static volatile uint32_t last_time = 0;
+int num = 0;
+//-----FUNÇÕES COMPLEMENTARES-----
+static void gpio_irq_handler(uint gpio, uint32_t events);
 
 // ------MATRIZ-----
 int tamanho_matriz = 5;
@@ -57,48 +63,29 @@ uint matrizint[5][5] = {
 
 uint8_t _intensidade_ = 255;
 bool contar = true;
-
+int BOTAO;
 //-----FUNÇÃO PRINCIPAL-----
 int main(void)
-{	
+{
 	inicializacao_maquina_pio(PINO_MATRIZ_LED);
-	iniciar_pino_gpio();	
+	iniciar_pino_gpio();
 	limpar_o_buffer();
 	_intensidade_ = 100;
-	int num = 0;
+
+	BOTAO = BOTAO_B;
+	// Configura o botão 0 para interromper a execução e chamar a função gpio_irq_handler quando o botão 0 for pressionado.
+	gpio_set_irq_enabled_with_callback(BOTAO, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 	// A mágica acontece aqui :)
 	while (true)
 	{
 		piscar_led();
 		desenho(num);
-		while (contar)
-		{
-			if(gpio_get(BOTAO_A) == 0){
-				if(num == 9){
-					num = 9;
-				}else{
-					num++;
-				}
-				break;
-			}
-			if(gpio_get(BOTAO_B) == 0){
-				if(num == 0){
-					num = 0;
-				}else{
-					num--;
-				}
-				break;
-			}
-			
-		}
 		
+
 		escrever_no_buffer();
 	}
 	return 0;
 }
-
-
-
 
 //-----FUNÇÕES COMPLEMENTARES-----
 // Inicializa a máquina PIO para controle da matriz de LEDs.
@@ -116,7 +103,7 @@ void inicializacao_maquina_pio(uint pino)
 		maquina_pio = pio1;
 		variavel_maquina_de_estado = pio_claim_unused_sm(maquina_pio, true); // Se nenhuma máquina estiver livre, panic!
 	}
-	
+
 	// Inicia programa na máquina PIO obtida.
 	ws2818b_program_init(maquina_pio, variavel_maquina_de_estado, programa_pio, pino, 800000.f);
 
@@ -130,29 +117,29 @@ void inicializacao_maquina_pio(uint pino)
 }
 
 void iniciar_pino_gpio()
-	{
-		gpio_init(PINO_BUZZER_A);
-		gpio_set_dir(PINO_BUZZER_A, GPIO_OUT);
-		gpio_init(PINO_BUZZER_B);
-		gpio_set_dir(PINO_BUZZER_B, GPIO_OUT);
+{
+	gpio_init(PINO_BUZZER_A);
+	gpio_set_dir(PINO_BUZZER_A, GPIO_OUT);
+	gpio_init(PINO_BUZZER_B);
+	gpio_set_dir(PINO_BUZZER_B, GPIO_OUT);
 
-		gpio_init(LED_G);
-		gpio_set_dir(LED_G, GPIO_OUT);
-		gpio_init(LED_R);
-		gpio_set_dir(LED_R, GPIO_OUT);
-		gpio_init(LED_B);
-		gpio_set_dir(LED_B, GPIO_OUT);
+	gpio_init(LED_G);
+	gpio_set_dir(LED_G, GPIO_OUT);
+	gpio_init(LED_R);
+	gpio_set_dir(LED_R, GPIO_OUT);
+	gpio_init(LED_B);
+	gpio_set_dir(LED_B, GPIO_OUT);
 
-		gpio_init(BOTAO_J);
-		gpio_set_dir(BOTAO_J, GPIO_IN);
-		gpio_pull_up(BOTAO_J);
-		gpio_init(BOTAO_A);
-		gpio_set_dir(BOTAO_A, GPIO_IN);
-		gpio_pull_up(BOTAO_A);
-		gpio_init(BOTAO_B);
-		gpio_set_dir(BOTAO_B, GPIO_IN);
-		gpio_pull_up(BOTAO_B);
-	}
+	gpio_init(BOTAO_J);
+	gpio_set_dir(BOTAO_J, GPIO_IN);
+	gpio_pull_up(BOTAO_J);
+	gpio_init(BOTAO_A);
+	gpio_set_dir(BOTAO_A, GPIO_IN);
+	gpio_pull_up(BOTAO_A);
+	gpio_init(BOTAO_B);
+	gpio_set_dir(BOTAO_B, GPIO_IN);
+	gpio_pull_up(BOTAO_B);
+}
 
 // Atribui uma cor RGB a um LED.
 void atribuir_cor_ao_led(const uint indice, const uint8_t r, const uint8_t g, const uint8_t b, uint8_t intensidade)
@@ -295,4 +282,26 @@ void beep(int frequency)
 	}
 }
 
+void gpio_irq_handler(uint gpio, uint32_t events)
+{
+	// Obtém o tempo atual em microssegundos
+	uint32_t current_time = to_us_since_boot(get_absolute_time());
+	// Verifica se passou tempo suficiente desde o último evento
+	if (current_time - last_time > 200000) // 200 ms de debouncing
+	{
+		last_time = current_time; // Atualiza o tempo do último evento
+		if (gpio == BOTAO_B)
+		{
+			
+				num = 9;
+			}
+			if (gpio == BOTAO_A)
+			{
+				num = 8;
+			}
+			
+			beep(2000);
+			
+	} // incrementa a variavel de verificação
+}
 
