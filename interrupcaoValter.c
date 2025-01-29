@@ -57,15 +57,11 @@ uint8_t _intensidade_ = 255;
 
 //-----FUNÇÃO PRINCIPAL-----
 int main(void)
-{
-	char tecla;
+{	
 	inicializacao_maquina_pio(PINO_MATRIZ_LED);
-
-	// inicializa teclado
-	keypad_init();
+	iniciar_pino_gpio();	
 	limpar_o_buffer();
 	_intensidade_ = 100;
-
 	// A mágica acontece aqui :)
 	while (true)
 	{
@@ -91,7 +87,20 @@ void inicializacao_maquina_pio(uint pino)
 		maquina_pio = pio1;
 		variavel_maquina_de_estado = pio_claim_unused_sm(maquina_pio, true); // Se nenhuma máquina estiver livre, panic!
 	}
-	void iniciar_pino_gpio()
+	
+	// Inicia programa na máquina PIO obtida.
+	ws2818b_program_init(maquina_pio, variavel_maquina_de_estado, programa_pio, pino, 800000.f);
+
+	// Limpa buffer de pixels.
+	for (i = 0; i < CONTADOR_LED; ++i)
+	{
+		leds[i].R = 0;
+		leds[i].G = 0;
+		leds[i].B = 0;
+	}
+}
+
+void iniciar_pino_gpio()
 	{
 		gpio_init(PINO_BUZZER_A);
 		gpio_set_dir(PINO_BUZZER_A, GPIO_OUT);
@@ -115,17 +124,6 @@ void inicializacao_maquina_pio(uint pino)
 		gpio_set_dir(BOTAO_B, GPIO_IN);
 		gpio_pull_up(BOTAO_B);
 	}
-	// Inicia programa na máquina PIO obtida.
-	ws2818b_program_init(maquina_pio, variavel_maquina_de_estado, programa_pio, pino, 800000.f);
-
-	// Limpa buffer de pixels.
-	for (i = 0; i < CONTADOR_LED; ++i)
-	{
-		leds[i].R = 0;
-		leds[i].G = 0;
-		leds[i].B = 0;
-	}
-}
 
 // Atribui uma cor RGB a um LED.
 void atribuir_cor_ao_led(const uint indice, const uint8_t r, const uint8_t g, const uint8_t b, uint8_t intensidade)
