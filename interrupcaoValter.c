@@ -86,10 +86,12 @@ int main(void)
 		if (gpio_get(BOTAO_A) == 0)
 		{
 			BOTAO = BOTAO_A;
+			beep(1000);
 		}
 		if (gpio_get(BOTAO_B) == 0)
 		{
 			BOTAO = BOTAO_B;
+			beep(1000);
 		}
 		escrever_no_buffer();
 	}
@@ -276,7 +278,7 @@ void escrever_no_buffer()
 
 void beep(int frequency)
 {
-	int period = 100000 / frequency; // Período em microssegundos
+	int period = 1000000 / frequency; // Período em microssegundos
 	int half_period = period / 2;
 
 	for (int i = 0; i < 10; i++)
