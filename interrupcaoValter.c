@@ -45,10 +45,12 @@ void desenho(int num);
 void piscar_led();
 
 //-----VARIÁVEIS-----
-static volatile uint a = 1;
-static volatile uint32_t last_time = 0;
-int num = 0;
+
+static volatile uint32_t last_time_A = 0;
+static volatile uint32_t last_time_B = 0;
+
 //-----FUNÇÕES COMPLEMENTARES-----
+static void gpio_irq_handler(uint gpio, uint32_t events);
 static void gpio_irq_handler_botao_A(uint gpio, uint32_t events);
 static void gpio_irq_handler_botao_B(uint gpio, uint32_t events);
 
@@ -63,8 +65,8 @@ uint matrizint[5][5] = {
 		{4, 3, 2, 1, 0}};
 
 uint8_t _intensidade_ = 255;
-bool contar = true;
-int BOTAO;
+int num = 5;
+
 //-----FUNÇÃO PRINCIPAL-----
 int main(void)
 {
@@ -73,7 +75,6 @@ int main(void)
 	limpar_o_buffer();
 	_intensidade_ = 100;
 
-	
 	// Configura o botão 0 para interromper a execução e chamar a função gpio_irq_handler quando o botão 0 for pressionado.
 	gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler_botao_A);
 	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler_botao_B);
@@ -284,34 +285,26 @@ void beep(int frequency)
 
 void gpio_irq_handler_botao_A(uint gpio, uint32_t events)
 {
+
 	// Obtém o tempo atual em microssegundos
 	uint32_t current_time = to_us_since_boot(get_absolute_time());
 	// Verifica se passou tempo suficiente desde o último evento
-	if (current_time - last_time > 200000) // 200 ms de debouncing
+	if (current_time - last_time_A> 200000) // 200 ms de debouncing
 	{
-		last_time = current_time; // Atualiza o tempo do último evento
-		if(num >= 9){
-				num = 9;
-			}else{
-				num++;
-			}
-			
-	} // incrementa a variavel de verificação
+		last_time_A = current_time; // Atualiza o tempo do último evento
+		num++;
+		printf("BOTAO_A pressionado! num agora: %d\n", num);
+	}
 }
 void gpio_irq_handler_botao_B(uint gpio, uint32_t events)
 {
 	// Obtém o tempo atual em microssegundos
 	uint32_t current_time = to_us_since_boot(get_absolute_time());
 	// Verifica se passou tempo suficiente desde o último evento
-	if (current_time - last_time > 200000) // 200 ms de debouncing
+	if (current_time - last_time_B > 200000) // 200 ms de debouncing
 	{
-		last_time = current_time; // Atualiza o tempo do último evento
-		if(num <= 0 ){
-				num = 0;
-			}else{
-				num--;
-			}
-			
-	} // incrementa a variavel de verificação
+		last_time_B = current_time; // Atualiza o tempo do último evento
+		num--;
+		printf("BOTAO_B pressionado! num agora: %d\n", num);
+	}
 }
-
