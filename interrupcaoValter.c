@@ -60,30 +60,35 @@ uint matrizint[5][5] = {
 		{5, 6, 7, 8, 9},
 		{4, 3, 2, 1, 0}};
 
+//-----VARIÁVEIS GLOBAIS-----
 uint8_t _intensidade_ = 255;
 int num = 5;
- int BOTAO;
+int BOTAO;
 
 //-----FUNÇÃO PRINCIPAL-----
 int main(void)
 {
+	// Inicializa a máquina PIO para controle da matriz de LEDs.
 	inicializacao_maquina_pio(PINO_MATRIZ_LED);
-	iniciar_pino_gpio();
-	limpar_o_buffer();
-	_intensidade_ = 100;
+	iniciar_pino_gpio(); // Inicializa os pinos GPIO
+	limpar_o_buffer(); // Limpa o buffer de pixels
+	_intensidade_ = 100; // Intensidade inicial
 
 	// Configura o botão 0 para interromper a execução e chamar a função gpio_irq_handler quando o botão 0 for pressionado.
 	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 	gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
-	// A mágica acontece aqui :)
+
+	// Inicia a execução.
 	while (true)
 	{
 		piscar_led();
 		desenho(num);
-		if(gpio_get(BOTAO_A)== 0){
+		if (gpio_get(BOTAO_A) == 0)
+		{
 			BOTAO = BOTAO_A;
 		}
-		if(gpio_get(BOTAO_B) == 0){
+		if (gpio_get(BOTAO_B) == 0)
+		{
 			BOTAO = BOTAO_B;
 		}
 		escrever_no_buffer();
@@ -168,9 +173,9 @@ void limpar_o_buffer()
 		atribuir_cor_ao_led(i, 0, 0, 0, 0);
 	}
 }
-
+	// Desenha o número escolhido
 void desenho(int num)
-{
+{ // Desenha o número escolhido
 	char(*matriz)[5];
 	if (num == 0)
 	{
@@ -212,11 +217,11 @@ void desenho(int num)
 	{
 		matriz = matriz_9;
 	}
-
+	// Atualiza a matriz de LEDs
 	for (int x = 0; x < tamanho_matriz; x++)
 	{
 		for (int y = 0; y < tamanho_matriz; y++)
-		{
+		{  // R, G, B, Y, P
 			if (matriz[x][y] == 'R')
 			{
 				atribuir_cor_ao_led(matrizint[x][y], 1, 0, 0, _intensidade_);
@@ -292,21 +297,32 @@ void gpio_irq_handler(uint gpio, uint32_t events)
 	// Obtém o tempo atual em microssegundos
 	uint32_t current_time = to_us_since_boot(get_absolute_time());
 	// Verifica se passou tempo suficiente desde o último evento
-	if (current_time - last_time> 200000) // 200 ms de debouncing
+	if (current_time - last_time > 200000) // 200 ms de debouncing
 	{
 		last_time = current_time; // Atualiza o tempo do último evento
-		if(gpio == BOTAO_A){
-			if(num == 9){
+		// Verifica qual botão foi pressionado	
+
+		//
+		if (gpio == BOTAO_A)
+		{
+			if (num == 9) 
+			{
 				num = 9;
 				beep(1000);
-			}else{
+			}
+			else
+			{
 				num++;
 			}
-		} 
-		if(gpio == BOTAO_B) {
-			if(num == 0){
+		}
+		if (gpio == BOTAO_B)
+		{
+			if (num == 0)
+			{
 				num = 0;
-			}else{
+			}
+			else
+			{
 				num--;
 			}
 		}
