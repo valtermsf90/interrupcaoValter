@@ -12,6 +12,7 @@ Conversão de padrões numéricos em cores RGB.
 
 Controle da intensidade dos LEDs.
 
+
 2. Controle de Entrada
 
 Botão A (GPIO 5): Avança para o próximo número.
@@ -20,11 +21,6 @@ Botão B (GPIO 6): Retorna ao número anterior.
 
 Botão J (GPIO 22): Interação adicional (pode ser configurado para outras funções).
 
-3. Indicação Sonora
-
-Buzzer (GPIO 10 e 21): Emite um som ao pressionar os botões.
-
-Frequência do som ajustável.
 
 4. Controle via PIO
 
