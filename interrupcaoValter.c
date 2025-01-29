@@ -49,7 +49,8 @@ static volatile uint a = 1;
 static volatile uint32_t last_time = 0;
 int num = 0;
 //-----FUNÇÕES COMPLEMENTARES-----
-static void gpio_irq_handler(uint gpio, uint32_t events);
+static void gpio_irq_handler_botao_A(uint gpio, uint32_t events);
+static void gpio_irq_handler_botao_B(uint gpio, uint32_t events);
 
 // ------MATRIZ-----
 int tamanho_matriz = 5;
@@ -72,16 +73,15 @@ int main(void)
 	limpar_o_buffer();
 	_intensidade_ = 100;
 
-	BOTAO = BOTAO_B;
+	
 	// Configura o botão 0 para interromper a execução e chamar a função gpio_irq_handler quando o botão 0 for pressionado.
-	gpio_set_irq_enabled_with_callback(BOTAO, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+	gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler_botao_A);
+	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler_botao_B);
 	// A mágica acontece aqui :)
 	while (true)
 	{
 		piscar_led();
 		desenho(num);
-		
-
 		escrever_no_buffer();
 	}
 	return 0;
@@ -282,7 +282,7 @@ void beep(int frequency)
 	}
 }
 
-void gpio_irq_handler(uint gpio, uint32_t events)
+void gpio_irq_handler_botao_A(uint gpio, uint32_t events)
 {
 	// Obtém o tempo atual em microssegundos
 	uint32_t current_time = to_us_since_boot(get_absolute_time());
@@ -290,17 +290,27 @@ void gpio_irq_handler(uint gpio, uint32_t events)
 	if (current_time - last_time > 200000) // 200 ms de debouncing
 	{
 		last_time = current_time; // Atualiza o tempo do último evento
-		if (gpio == BOTAO_B)
-		{
-			
+		if(num >= 9){
 				num = 9;
-			}
-			if (gpio == BOTAO_A)
-			{
-				num = 8;
+			}else{
+				num++;
 			}
 			
-			beep(2000);
+	} // incrementa a variavel de verificação
+}
+void gpio_irq_handler_botao_B(uint gpio, uint32_t events)
+{
+	// Obtém o tempo atual em microssegundos
+	uint32_t current_time = to_us_since_boot(get_absolute_time());
+	// Verifica se passou tempo suficiente desde o último evento
+	if (current_time - last_time > 200000) // 200 ms de debouncing
+	{
+		last_time = current_time; // Atualiza o tempo do último evento
+		if(num <= 0 ){
+				num = 0;
+			}else{
+				num--;
+			}
 			
 	} // incrementa a variavel de verificação
 }
