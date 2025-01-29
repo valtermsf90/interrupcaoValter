@@ -42,6 +42,8 @@ void beep(int frequency);
 void limpar_o_buffer();
 void escrever_no_buffer();
 void desenho(int num);
+void piscar_led();
+
 
 // ------MATRIZ-----
 int tamanho_matriz = 5;
@@ -72,11 +74,19 @@ int main(void)
 		while (contar)
 		{
 			if(gpio_get(BOTAO_A) == 0){
-				num++;
+				if(num == 9){
+					num = 9;
+				}else{
+					num++;
+				}
 				break;
 			}
 			if(gpio_get(BOTAO_B) == 0){
-				num--;
+				if(num == 0){
+					num = 0;
+				}else{
+					num--;
+				}
 				break;
 			}
 			
@@ -86,6 +96,9 @@ int main(void)
 	}
 	return 0;
 }
+
+
+
 
 //-----FUNÇÕES COMPLEMENTARES-----
 // Inicializa a máquina PIO para controle da matriz de LEDs.
