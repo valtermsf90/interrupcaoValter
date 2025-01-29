@@ -1,4 +1,15 @@
 #include "frames.h"
+
+#define CONTADOR_LED 25
+#define PINO_MATRIZ_LED 7
+#define PINO_BUZZER_A 21
+#define PINO_BUZZER_B 10
+#define BOTAO_J 22
+#define BOTAO_A 5
+#define BOTAO_B 6
+#define LED_G 11
+#define LED_R 13
+#define LED_B 12
 /*
 R = vermelho
 G = verde
@@ -12,16 +23,12 @@ w = brando
 */
 
 
-void contador_valter(){
-  
-  int time = 1000;
-  for(int i = 0; i < 10; i++){
-    
-    desenho(i);
-    escrever_no_buffer(); // Escreve os dados nos LEDs.
-    sleep_ms(time);
-    limpar_o_buffer();
-  }
+void piscar_led(){  
+  int time = 200;
+  gpio_put(LED_R, 1);
+  sleep_ms(time);
+  gpio_put(LED_R, 0);
+  sleep_ms(time);
   }
 
   char matriz_0[5][5]={

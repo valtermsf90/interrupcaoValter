@@ -17,8 +17,8 @@
 #define BOTAO_A 5
 #define BOTAO_B 6
 #define LED_G 11
-#define LED_R 12
-#define LED_B 13
+#define LED_R 13
+#define LED_B 12
 
 // Definição de pixel GRB
 struct pixel_t
@@ -65,7 +65,7 @@ int main(void)
 	// A mágica acontece aqui :)
 	while (true)
 	{
-		contador_valter();
+		piscar_led();
 		escrever_no_buffer();
 	}
 	return 0;

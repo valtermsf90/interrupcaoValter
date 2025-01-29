@@ -1,7 +1,7 @@
 #ifndef FRAMES_H
 #define FRAMES_H
 
-void contador_valter();
+void picsar_led();
 
 void limpar_o_buffer();
 
