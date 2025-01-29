@@ -54,6 +54,7 @@ uint matrizint[5][5] = {
 		{4, 3, 2, 1, 0}};
 
 uint8_t _intensidade_ = 255;
+bool contar = true;
 
 //-----FUNÇÃO PRINCIPAL-----
 int main(void)
@@ -62,10 +63,25 @@ int main(void)
 	iniciar_pino_gpio();	
 	limpar_o_buffer();
 	_intensidade_ = 100;
+	int num = 0;
 	// A mágica acontece aqui :)
 	while (true)
 	{
 		piscar_led();
+		desenho(num);
+		while (contar)
+		{
+			if(gpio_get(BOTAO_A) == 0){
+				num++;
+				break;
+			}
+			if(gpio_get(BOTAO_B) == 0){
+				num--;
+				break;
+			}
+			
+		}
+		
 		escrever_no_buffer();
 	}
 	return 0;
