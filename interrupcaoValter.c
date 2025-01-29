@@ -62,7 +62,7 @@ uint matrizint[5][5] = {
 
 //-----VARIÁVEIS GLOBAIS-----
 uint8_t _intensidade_ = 255;
-int num = 5;
+int num = 0;
 int BOTAO;
 
 //-----FUNÇÃO PRINCIPAL-----
@@ -308,7 +308,6 @@ void gpio_irq_handler(uint gpio, uint32_t events)
 			if (num == 9) 
 			{
 				num = 9;
-				beep(1000);
 			}
 			else
 			{
