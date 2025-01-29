@@ -45,14 +45,10 @@ void desenho(int num);
 void piscar_led();
 
 //-----VARIÁVEIS-----
-
-static volatile uint32_t last_time_A = 0;
-static volatile uint32_t last_time_B = 0;
+static volatile uint32_t last_time = 0;
 
 //-----FUNÇÕES COMPLEMENTARES-----
 static void gpio_irq_handler(uint gpio, uint32_t events);
-static void gpio_irq_handler_botao_A(uint gpio, uint32_t events);
-static void gpio_irq_handler_botao_B(uint gpio, uint32_t events);
 
 // ------MATRIZ-----
 int tamanho_matriz = 5;
@@ -66,6 +62,7 @@ uint matrizint[5][5] = {
 
 uint8_t _intensidade_ = 255;
 int num = 5;
+ int BOTAO;
 
 //-----FUNÇÃO PRINCIPAL-----
 int main(void)
@@ -76,13 +73,19 @@ int main(void)
 	_intensidade_ = 100;
 
 	// Configura o botão 0 para interromper a execução e chamar a função gpio_irq_handler quando o botão 0 for pressionado.
-	gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler_botao_A);
-	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler_botao_B);
+	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+	gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 	// A mágica acontece aqui :)
 	while (true)
 	{
 		piscar_led();
 		desenho(num);
+		if(gpio_get(BOTAO_A)== 0){
+			BOTAO = BOTAO_A;
+		}
+		if(gpio_get(BOTAO_B) == 0){
+			BOTAO = BOTAO_B;
+		}
 		escrever_no_buffer();
 	}
 	return 0;
@@ -268,7 +271,7 @@ void escrever_no_buffer()
 
 void beep(int frequency)
 {
-	int period = 1000000 / frequency; // Período em microssegundos
+	int period = 100000 / frequency; // Período em microssegundos
 	int half_period = period / 2;
 
 	for (int i = 0; i < 10; i++)
@@ -283,28 +286,29 @@ void beep(int frequency)
 	}
 }
 
-void gpio_irq_handler_botao_A(uint gpio, uint32_t events)
+void gpio_irq_handler(uint gpio, uint32_t events)
 {
 
 	// Obtém o tempo atual em microssegundos
 	uint32_t current_time = to_us_since_boot(get_absolute_time());
 	// Verifica se passou tempo suficiente desde o último evento
-	if (current_time - last_time_A> 200000) // 200 ms de debouncing
+	if (current_time - last_time> 200000) // 200 ms de debouncing
 	{
-		last_time_A = current_time; // Atualiza o tempo do último evento
-		num++;
-		printf("BOTAO_A pressionado! num agora: %d\n", num);
-	}
-}
-void gpio_irq_handler_botao_B(uint gpio, uint32_t events)
-{
-	// Obtém o tempo atual em microssegundos
-	uint32_t current_time = to_us_since_boot(get_absolute_time());
-	// Verifica se passou tempo suficiente desde o último evento
-	if (current_time - last_time_B > 200000) // 200 ms de debouncing
-	{
-		last_time_B = current_time; // Atualiza o tempo do último evento
-		num--;
-		printf("BOTAO_B pressionado! num agora: %d\n", num);
+		last_time = current_time; // Atualiza o tempo do último evento
+		if(gpio == BOTAO_A){
+			if(num == 9){
+				num = 9;
+				beep(1000);
+			}else{
+				num++;
+			}
+		} 
+		if(gpio == BOTAO_B) {
+			if(num == 0){
+				num = 0;
+			}else{
+				num--;
+			}
+		}
 	}
 }
