@@ -43,7 +43,7 @@ void piscar_led();
 static volatile uint32_t last_time = 0;
 
 //-----FUNÇÕES COMPLEMENTARES-----
-static void gpio_irq_handler(uint gpio, uint32_t events);
+static void interrupcao(uint gpio, uint32_t events);
 
 // ------MATRIZ-----
 int tamanho_matriz = 5;
@@ -70,8 +70,8 @@ int main(void)
 	_intensidade_ = 100; // Intensidade inicial
 
 	// Configura o botão 0 para interromper a execução e chamar a função gpio_irq_handler quando o botão 0 for pressionado.
-	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
-	gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &interrupcao);
+	gpio_set_irq_enabled_with_callback(BOTAO_A, GPIO_IRQ_EDGE_FALL, true, &interrupcao);
 
 	// Inicia a execução.
 	while (true)
@@ -257,7 +257,7 @@ void escrever_no_buffer()
 	}
 	sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
 }
-void gpio_irq_handler(uint gpio, uint32_t events)
+void interrupcao(uint gpio, uint32_t events)
 {
 
 	// Obtém o tempo atual em microssegundos
