@@ -24,7 +24,7 @@ w = brando
 
 
 void piscar_led(){  
-  int time = 200;
+  int time = 100;
   gpio_put(LED_R, 1);
   sleep_ms(time);
   gpio_put(LED_R, 0);
