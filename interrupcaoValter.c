@@ -67,7 +67,7 @@ int main(void)
 	inicializacao_maquina_pio(PINO_MATRIZ_LED);
 	iniciar_pino_gpio(); // Inicializa os pinos GPIO
 	limpar_o_buffer(); // Limpa o buffer de pixels
-	_intensidade_ = 100; // Intensidade inicial
+	_intensidade_ = 255; // Intensidade inicial
 
 	// Configura o botão 0 para interromper a execução e chamar a função gpio_irq_handler quando o botão 0 for pressionado.
 	gpio_set_irq_enabled_with_callback(BOTAO_B, GPIO_IRQ_EDGE_FALL, true, &interrupcao);
@@ -208,31 +208,31 @@ void desenho(int num)
 		{  // R, G, B, Y, P
 			if (matriz[x][y] == 'R')
 			{
-				atribuir_cor_ao_led(matrizint[x][y], 1, 0, 0, _intensidade_);
+				atribuir_cor_ao_led(matrizint[x][y], 255, 0, 0, _intensidade_);
 			}
 			if (matriz[x][y] == 'G')
 			{
-				atribuir_cor_ao_led(matrizint[x][y], 0, 1, 0, _intensidade_);
+				atribuir_cor_ao_led(matrizint[x][y], 0, 255, 0, _intensidade_);
 			}
 			if (matriz[x][y] == 'B')
 			{
-				atribuir_cor_ao_led(matrizint[x][y], 0, 0, 1, _intensidade_);
+				atribuir_cor_ao_led(matrizint[x][y], 0, 0, 255, _intensidade_);
 			}
 			if (matriz[x][y] == 'Y')
 			{
-				atribuir_cor_ao_led(matrizint[x][y], 1, 1, 0, _intensidade_);
+				atribuir_cor_ao_led(matrizint[x][y], 255, 255, 0, _intensidade_);
 			}
 			if (matriz[x][y] == 'P')
 			{
-				atribuir_cor_ao_led(matrizint[x][y], 1, 0, 1, _intensidade_);
+				atribuir_cor_ao_led(matrizint[x][y], 255, 0, 255, _intensidade_);
 			}
 			if (matriz[x][y] == 'C')
 			{
-				atribuir_cor_ao_led(matrizint[x][y], 0, 1, 1, _intensidade_);
+				atribuir_cor_ao_led(matrizint[x][y], 0, 255, 255, _intensidade_);
 			}
 			if (matriz[x][y] == 'W')
 			{
-				atribuir_cor_ao_led(matrizint[x][y], 1, 1, 1, _intensidade_);
+				atribuir_cor_ao_led(matrizint[x][y], 255, 255, 255, _intensidade_);
 			}
 			if (matriz[x][y] == '*')
 			{

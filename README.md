@@ -1,7 +1,6 @@
 Matriz de LED com Raspberry Pi Pico W
 
-Este projeto utiliza um Raspberry Pi Pico W para controlar uma matriz de LEDs WS2812B, permitindo exibir números de 0 a 9. O sistema também inclui um buzzer para efeitos sonoros e botões para interação.
-
+Este projeto utiliza um Raspberry Pi Pico W para controlar uma matriz de LEDs WS2812B, permitindo exibir números de 0 a 9.
 📌 Funcionalidades
 
 1. Exibição de Números na Matriz de LEDs
@@ -36,7 +35,7 @@ Registro de última ação para controle preciso da exibição.
 
 🚀 Uso
 
-Este projeto permite exibir números de 0 a 9 em uma matriz de LEDs WS2812B, utilizando botões para alternar entre os números e um buzzer para indicar interações.
+Este projeto permite exibir números de 0 a 9 em uma matriz de LEDs WS2812B, utilizando botões para alternar entre os números.
 
 📖 Referências
 
@@ -47,6 +46,8 @@ SDK do Raspberry Pi Pico
 🔗 Repositório
 
 Código-fonte no GitHub https://github.com/valtermsf90/interrupcaoValter
+
+link video de demostração https://drive.google.com/file/d/1e61Oe9afPbfUlo_q2hyG1xTiN2V4-YCD/view?usp=sharing
 
 Criado por Valter Machado Silva Filho
 
